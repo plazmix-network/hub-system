@@ -1,0 +1,6 @@
+name: HubSystem
+main: net.plazmix.hub_system.HubSystemPlugin
+version: ${project.version}
+depend: [Core-spigot]
+authors:
+  - MasterCapeXD

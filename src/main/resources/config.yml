@@ -1,0 +1,7 @@
+permissions:
+  HUB_FULL: fullhub.bypass
+  HUB_FLY: hub.fly
+  HUB_JOIN_MESSAGE: hub.join.message
+
+edit-mode: false
+spawnpoint:
