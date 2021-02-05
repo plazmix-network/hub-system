@@ -76,6 +76,7 @@ public class HubSystemConfig extends SpigotYamlConfig {
                     for (String line : rawLines)
                         result.add(Colors.colorize(line
                                 .replace("%prefix%", group.getPrefix())
+                                .replace("%groupcolor%", group.getDisplayName().substring(0, 2))
                                 .replace("%suffix%", group.getSuffix())
                                 .replace("%player%", player.getName())
                                 .replace("%group%", group.getDisplayName())
