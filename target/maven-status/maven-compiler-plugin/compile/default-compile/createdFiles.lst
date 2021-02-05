@@ -1,0 +1,10 @@
+net/plazmix/hub_system/config/ItemsConfig.class
+net/plazmix/hub_system/menu/CommandItem.class
+net/plazmix/hub_system/config/HubSystemConfig.class
+net/plazmix/hub_system/listener/ChatListener.class
+net/plazmix/hub_system/listener/ConnectionListener.class
+net/plazmix/hub_system/listener/WorldListener.class
+net/plazmix/hub_system/menu/NavigatorMenu.class
+net/plazmix/hub_system/config/HubPermission.class
+net/plazmix/hub_system/HubSystemPlugin.class
+net/plazmix/hub_system/listener/PlayerActivityListener.class

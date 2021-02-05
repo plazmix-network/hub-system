@@ -3,6 +3,7 @@ package net.plazmix.hub_system.listener;
 import lombok.RequiredArgsConstructor;
 import net.plazmix.core.api.Core;
 import net.plazmix.core.api.common.config.LocaleConfig;
+import net.plazmix.core.api.service.economy.EconomyService;
 import net.plazmix.core.api.service.group.Group;
 import net.plazmix.core.api.service.group.GroupService;
 import net.plazmix.core.api.spigot.SpigotCoreApi;
@@ -10,10 +11,13 @@ import net.plazmix.core.api.spigot.nametag.Nametag;
 import net.plazmix.core.api.spigot.nametag.NametagManager;
 import net.plazmix.hub_system.config.HubPermission;
 import net.plazmix.hub_system.config.HubSystemConfig;
+import net.plazmix.hub_system.config.ItemsConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,8 +27,18 @@ public class ConnectionListener implements Listener {
 
     private final HubSystemConfig hubSystemConfig;
     private final LocaleConfig localeConfig;
+    private final ItemsConfig itemsConfig;
     private final GroupService groupService = Core.getApi().getService(GroupService.class);
     private final NametagManager nametagManager = ((SpigotCoreApi) Core.getApi()).getNametagManager();
+
+    @EventHandler
+    private void on(AsyncPlayerPreLoginEvent event) {
+        EconomyService economyService = Core.getApi().getService(EconomyService.class);
+        SpigotCoreApi coreApi = (SpigotCoreApi) Core.getApi();
+        coreApi.getPlugin().getServer().getScheduler().runTaskAsynchronously(coreApi.getPlugin(), () -> {
+            economyService.keep(event.getUniqueId(), economyService.getAccount(event.getUniqueId()), account -> false);
+        });
+    }
 
     @EventHandler
     private void on(PlayerLoginEvent event) {
@@ -69,10 +83,18 @@ public class ConnectionListener implements Listener {
                 event.getPlayer().getName(),
                 playerGroup.getSuffix(),
                 1);
+        hubSystemConfig.getSidebar().addPlayer(event.getPlayer());
+        itemsConfig.giveLobbyItems(event.getPlayer());
     }
 
     @EventHandler
-    private void on(PlayerQuitEvent event) {
+    private void clear(PlayerQuitEvent event) {
+        hubSystemConfig.getSidebar().removePlayer(event.getPlayer());
         event.setQuitMessage(null);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    private void invalidate(PlayerQuitEvent event) {
+        Core.getApi().getService(EconomyService.class).invalidate(event.getPlayer().getUniqueId());
     }
 }
